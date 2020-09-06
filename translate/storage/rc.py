@@ -27,10 +27,10 @@
 
 import re
 
-from pyparsing import (Combine, Forward, Group, Keyword, Optional, SkipTo,
-                       Word, ZeroOrMore, alphanums, alphas, commaSeparatedList,
-                       cStyleComment, delimitedList, nums, quotedString,
-                       restOfLine)
+from pyparsing import (Combine, Forward, Group, Keyword, Optional, SkipTo, Word,
+                       ZeroOrMore, OneOrMore, alphanums, alphas,
+                       commaSeparatedList, cStyleComment, delimitedList, nums,
+                       quotedString, removeQuotes, restOfLine)
 
 from translate.storage import base
 
@@ -149,8 +149,11 @@ def rc_statement():
     block_options = Optional(SkipTo(
         Keyword("CAPTION"), failOn=block_start)("pre_caption") + Keyword("CAPTION") + quotedString("caption")) + SkipTo(block_start)("post_caption")
 
+    string = quotedString().setParseAction(removeQuotes)
+    quotedStringSequence = Combine(OneOrMore(string), adjacent=False).setParseAction(lambda toks: ['"' + t + '"' for t in toks])
+
     undefined_control = Group(name_id.setResultsName(
-        "id_control") + delimitedList(quotedString ^ constant ^ numbers ^ Group(combined_constants)).setResultsName("values_"))
+        "id_control") + delimitedList(quotedStringSequence ^ constant ^ numbers ^ Group(combined_constants)).setResultsName("values_"))
 
     block = block_start + \
         ZeroOrMore(undefined_control)("controls") + block_end
