@@ -213,10 +213,12 @@ BEGIN
     IDS_REGISTRADO          "All done correctly.\nThank you very much."
     IDS_ACTIVADA            "This is what you do:\n%s"
     IDS_ERRORACTIV          "Error doing things"
+    IDS_ADJACENT_STRINGS    "Line1\n"
+                            "Line2"
 END
 """
         rc_file = self.source_parse(rc_source)
-        assert len(rc_file.units) == 6
+        assert len(rc_file.units) == 7
         rc_unit = rc_file.units[0]
         assert rc_unit.name == "STRINGTABLE.IDP_REGISTRONOV"
         assert rc_unit.source == "Data isn't valid"
@@ -235,6 +237,9 @@ END
         rc_unit = rc_file.units[5]
         assert rc_unit.name == "STRINGTABLE.IDS_ERRORACTIV"
         assert rc_unit.source == "Error doing things"
+        rc_unit = rc_file.units[6]
+        assert rc_unit.name == "STRINGTABLE.IDS_ADJACENT_STRINGS"
+        assert rc_unit.source == "Line1\nLine2"
 
     def test_parse_newlines_lf(self):
         """Test parsing a RC string with lf line endings."""
