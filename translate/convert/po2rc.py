@@ -164,14 +164,22 @@ class rerc:
                 out.append(c0[0].ljust(24))
 
             name = rc.generate_stringtable_name(c0[0])
-            msgid = c[1][1:-1]
+            msgid = ''.join(cn[1:-1] for cn in c[1:])
+
             if msgid in self.inputdict:
+                del c[2:]
                 if name in self.inputdict[msgid]:
                     c[1] = '"' + self.inputdict[msgid][name] + '"'
                 elif EMPTY_LOCATION in self.inputdict[msgid]:
                     c[1] = '"' + self.inputdict[msgid][EMPTY_LOCATION] + '"'
 
-            out.append(",".join(c[1:]))
+            del c[0]
+            while len(c) > 1:
+                out.append(c[0])
+                out.append(NL + " " * (24 + 4))
+                del c[0]
+            out.append(c[0])
+
             out.append(NL)
 
         out.append(BLOCK_END)
