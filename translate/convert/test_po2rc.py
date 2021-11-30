@@ -89,6 +89,8 @@ STRINGTABLE
 BEGIN
     // IDS_COMMENTED        "Comment"
     IDS_COPIED              "Copied"
+    IDS_ADJACENT_STRINGS    "Line1\n"
+                            "Line2"
 END
 """,
         )
