@@ -128,7 +128,7 @@ class rerc:
 
             for a in c[2:]:
                 if is_iterable_but_not_string(a):
-                    tmp.append(" | ".join(a))
+                    tmp.append(" ".join(a))
                 else:
                     tmp.append(a)
 

@@ -33,6 +33,7 @@ from pyparsing import (
     Forward,
     Group,
     Keyword,
+    Literal,
     OneOrMore,
     Optional,
     SkipTo,
@@ -42,6 +43,7 @@ from pyparsing import (
     alphas,
     c_style_comment,
     delimited_list,
+    ungroup,
     nums,
     quoted_string,
     rest_of_line,
@@ -183,13 +185,28 @@ def rc_statement():
 
     integerconstant = numbers ^ Combine("0x" + numbers)
 
-    constant = Combine(
-        Optional(Keyword("NOT")) + (name_id | integerconstant),
-        adjacent=False,
-        join_string=" ",
+    # constant can be a literal number, or an unquoted alphanumeric sequence
+    # (which is assumed to be a pre-processor define we don't look through)
+    constant = name_id | integerconstant
+
+    # since we don't need to evaluate the arithmetic expression, we can just
+    # treat it as a seqence of tokens.
+    arith_symbol = (
+        Keyword("NOT") |
+        Literal("(") |
+        Literal(")") |
+        Literal("~") |
+        Literal("+") |
+        Literal("-") |
+        Literal("*") |
+        Literal("/") |
+        Literal("%") |
+        Literal("&") |
+        Literal("^") |
+        Literal("|")
     )
 
-    combined_constants = delimited_list(constant, "|")
+    numexpr = constant | Group(arith_symbol | constant)
 
     concatenated_string = OneOrMore(quoted_string)
 
@@ -203,7 +220,7 @@ def rc_statement():
         Group(
             name_id.set_results_name("id_control")
             + delimited_list(
-                concatenated_string ^ constant ^ numbers ^ Group(combined_constants)
+                concatenated_string ^ ungroup(numexpr)
             ).set_results_name("values_")
         )
         | comments
