@@ -308,7 +308,7 @@ class rcfile(base.TranslationStore):
     """This class represents a .rc file, made up of rcunits."""
 
     UnitClass = rcunit
-    default_encoding = "auto"
+    default_encoding = "cp1252"
 
     def __init__(self, inputfile=None, lang=None, sublang=None, **kwargs):
         """Construct an rcfile, optionally reading in from inputfile."""

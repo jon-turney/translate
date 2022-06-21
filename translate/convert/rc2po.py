@@ -138,7 +138,7 @@ def main(argv=None):
     parser = convert.ConvertOptionParser(
         formats, usetemplates=True, usepots=True, description=__doc__
     )
-    DEFAULTCHARSET = "auto"
+    DEFAULTCHARSET = rc.rcfile.default_encoding
     parser.add_option(
         "",
         "--charset",
